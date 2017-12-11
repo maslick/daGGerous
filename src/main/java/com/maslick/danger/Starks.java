@@ -4,8 +4,14 @@ import javax.inject.Inject;
 
 public class Starks implements House {
 
+    private Allies allies;
+    private IronBank ironBank;
+
     @Inject
-    public Starks() {}
+    public Starks(Allies allies, IronBank ironBank) {
+        this.allies = allies;
+        this.ironBank = ironBank;
+    }
 
     @Override
     public void prepareForWar() {

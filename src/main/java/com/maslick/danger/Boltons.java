@@ -4,8 +4,15 @@ import javax.inject.Inject;
 
 public class Boltons implements House {
 
+    private Allies allies;
+    private IronBank ironBank;
+
     @Inject
-    public Boltons() {}
+    public Boltons(Allies allies, IronBank ironBank) {
+        this.allies = allies;
+        this.ironBank = ironBank;
+    }
+
 
     @Override
     public void prepareForWar() {

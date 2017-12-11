@@ -1,3 +1,9 @@
 package com.maslick.danger;
 
-public class IronBank {}
+import javax.inject.Inject;
+
+public class IronBank {
+    @Inject
+    public IronBank() {
+    }
+}
