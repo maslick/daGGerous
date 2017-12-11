@@ -1,11 +1,10 @@
 package com.maslick.danger;
 
 
-import dagger.Component;
-
 import javax.inject.Inject;
 
 public class War {
+
     private Starks starks;
     private Boltons boltons;
 

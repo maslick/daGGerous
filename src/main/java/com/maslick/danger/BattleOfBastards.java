@@ -7,7 +7,9 @@ public class BattleOfBastards {
     public static void main(String[] args){
         // Ручное внедрение зависимостей
         // Starks starks = new Starks();
-        // Boltons boltons = new Boltons();as
+        // Boltons boltons = new Boltons();
+        // War war = new War(starks,boltons);
+        // war.prepare();
         // war.report();
         BattleComponent component = DaggerBattleComponent.create();
         War war = component.getWar();
