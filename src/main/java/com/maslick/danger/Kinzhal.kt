@@ -24,6 +24,10 @@ class Context {
     init { println("initializing context") }
 }
 
+class SharedPrefs(val context: Context) {
+    init { println("initializing shared prefs") }
+}
+
 class File(val context: Context) {
     init { println("initializing file system") }
 }
@@ -84,37 +88,43 @@ class FakeApiModule {
     fun api(): Api = FakeApi()
 }
 
+@Module(includes = [ContextModule::class])
+class SharedPrefsModule {
+    @Singleton
+    @Provides
+    fun prefs(context: Context) = SharedPrefs(context)
+}
+
 @Singleton
-@Component(modules = [ApiModule::class, FakeApiModule::class])
+@Component(modules = [ApiModule::class, FakeApiModule::class, SharedPrefsModule::class])
 interface ApiComponent {
     @Real fun api(): Api
     @Fake fun fakeApi(): Api
+    fun prefs(): SharedPrefs
 }
 
 
 // Application
-object App {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val component = DaggerApiComponent.builder()
-                .contextModule(ContextModule(Context()))
-                .build()
+fun main(args: Array<String>) {
+    val component = DaggerApiComponent.builder()
+            .contextModule(ContextModule(Context()))
+            .build()
 
-        val realApi = component.api()
-        val stubApi = component.fakeApi()
+    val realApi = component.api()
+    val stubApi = component.fakeApi()
+    val prefs = component.prefs()
 
-        println()
+    println()
 
-        val city1 = "Ljubljana"
-        val weather1 = realApi.getWeather(city1)
-        println("weather in $city1: $weather1")
+    val city1 = "Ljubljana"
+    val weather1 = realApi.getWeather(city1)
+    println("weather in $city1: $weather1")
 
-        val city2 = "St. Pete"
-        val weather2 = stubApi.getWeather(city2)
-        println("weather in $city2: $weather2")
+    val city2 = "St. Pete"
+    val weather2 = stubApi.getWeather(city2)
+    println("weather in $city2: $weather2")
 
-        // testing the singletons
-        val realApi2 = component.api()
-        val stubApi2 = component.fakeApi()
-    }
+    // testing the singletons
+    val realApi2 = component.api()
+    val stubApi2 = component.fakeApi()
 }
