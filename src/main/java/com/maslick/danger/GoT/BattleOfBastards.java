@@ -1,6 +1,7 @@
-package com.maslick.danger;
+package com.maslick.danger.GoT;
 
-import com.maslick.danger.modules.BraavosModule;
+import com.maslick.danger.DaggerBattleComponent;
+import com.maslick.danger.GoT.modules.BraavosModule;
 import dagger.Component;
 
 public class BattleOfBastards {
@@ -24,8 +25,8 @@ public class BattleOfBastards {
         war.prepare();
         war.report();
 
-        component.getCash();
-        component.getSoldiers();
+        Cash cash1 = component.getCash();
+        Soldiers soldiers1 = component.getSoldiers();
     }
 }
 

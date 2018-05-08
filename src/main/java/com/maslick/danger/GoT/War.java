@@ -1,4 +1,4 @@
-package com.maslick.danger;
+package com.maslick.danger.GoT;
 
 
 import javax.inject.Inject;

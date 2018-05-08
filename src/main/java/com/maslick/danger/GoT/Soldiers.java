@@ -1,4 +1,4 @@
-package com.maslick.danger;
+package com.maslick.danger.GoT;
 
 public class Soldiers {
     public Soldiers(){

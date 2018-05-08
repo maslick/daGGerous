@@ -1,7 +1,7 @@
-package com.maslick.danger.modules;
+package com.maslick.danger.GoT.modules;
 
-import com.maslick.danger.Cash;
-import com.maslick.danger.Soldiers;
+import com.maslick.danger.GoT.Cash;
+import com.maslick.danger.GoT.Soldiers;
 import dagger.Module;
 import dagger.Provides;
 
