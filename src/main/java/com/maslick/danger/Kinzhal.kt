@@ -43,7 +43,7 @@ class HttpClient(val cache: Cache, val logging: LoggingInterceptor) {
 
 // Dagger config (qualifiers, modules, components)
 @Qualifier annotation class Real
-@Qualifier annotation class Stub
+@Qualifier annotation class Fake
 
 @Module
 class ContextModule(private val context: Context) {
@@ -79,7 +79,7 @@ class ApiModule {
 
 @Module
 class FakeApiModule {
-    @Stub
+    @Fake
     @Provides
     fun api(): Api = FakeApi()
 }
@@ -88,7 +88,7 @@ class FakeApiModule {
 @Component(modules = [ApiModule::class, FakeApiModule::class])
 interface ApiComponent {
     @Real fun api(): Api
-    @Stub fun fakeApi(): Api
+    @Fake fun fakeApi(): Api
 }
 
 
