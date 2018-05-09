@@ -3,6 +3,7 @@ package com.maslick.danger
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import javax.inject.Inject
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -101,8 +102,8 @@ interface ApiComponent {
     @Real fun api(): Api
     @Fake fun fakeApi(): Api
     fun prefs(): SharedPrefs
+    fun inject(app: App)
 }
-
 
 // Application
 fun main(args: Array<String>) {
@@ -127,4 +128,28 @@ fun main(args: Array<String>) {
     // testing the singletons
     val realApi2 = component.api()
     val stubApi2 = component.fakeApi()
+}
+
+// Application (using inject)
+class App {
+    @Inject @field:Real lateinit var realApi: Api
+    @Inject @field:Fake lateinit var fakeApi: Api
+
+    init {
+        DaggerApiComponent
+                .builder()
+                .contextModule(ContextModule(Context()))
+                .build()
+                .inject(this)
+    }
+}
+
+object Epp {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val app = App()
+        val w1 = app.fakeApi.getWeather("St Pete")
+        val w2 = app.realApi.getWeather("Lj")
+        println("$w1, $w2")
+    }
 }
