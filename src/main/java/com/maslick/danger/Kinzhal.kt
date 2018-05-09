@@ -26,7 +26,8 @@ class Context {
 }
 
 class SharedPrefs(val context: Context) {
-    init { println("initializing shared prefs") }
+    init { println("initializing shared sharedPrefs") }
+    val map = mutableMapOf<String, String>()
 }
 
 class File(val context: Context) {
@@ -128,12 +129,17 @@ fun main(args: Array<String>) {
     // testing the singletons
     val realApi2 = component.api()
     val stubApi2 = component.fakeApi()
+
+    // testing shared prefs
+    prefs.map.put("hello", "world")
+    println("hello: ${prefs.map["hello"]}")
 }
 
 // Application (using inject)
 class App {
     @Inject @field:Real lateinit var realApi: Api
     @Inject @field:Fake lateinit var fakeApi: Api
+    @Inject lateinit var sharedPrefs: SharedPrefs
 
     init {
         DaggerApiComponent
@@ -151,5 +157,7 @@ object Epp {
         val w1 = app.fakeApi.getWeather("St Pete")
         val w2 = app.realApi.getWeather("Lj")
         println("$w1, $w2")
+        app.sharedPrefs.map.put("hello", "world")
+        println("hello: ${app.sharedPrefs.map["hello"]}")
     }
 }
