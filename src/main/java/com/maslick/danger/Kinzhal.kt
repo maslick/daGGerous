@@ -129,8 +129,8 @@ fun main(args: Array<String>) {
     println("weather in $city2: $weather2")
 
     // testing the singletons
-    val realApi2 = component.api().getWeather("")
-    val fakeApi2 = component.fakeApi().getWeather("")
+    component.api().getWeather("dummy")
+    component.fakeApi().getWeather("dummy")
 
     // testing shared prefs
     prefs.map["hello"] = "world"
