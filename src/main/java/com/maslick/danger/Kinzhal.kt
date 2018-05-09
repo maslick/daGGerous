@@ -53,6 +53,7 @@ class HttpClient(val cache: Cache, val logging: LoggingInterceptor) {
 
 @Module
 class ContextModule(private val context: Context) {
+    @Singleton
     @Provides
     fun context() = context
 }
@@ -103,7 +104,8 @@ interface ApiComponent {
     @Real fun api(): Api
     @Fake fun fakeApi(): Api
     fun prefs(): SharedPrefs
-    fun inject(app: App)
+    fun inject(app: Activity1)
+    fun inject(app: Activity2)
 }
 
 // Application
@@ -113,7 +115,7 @@ fun main(args: Array<String>) {
             .build()
 
     val realApi = component.api()
-    val stubApi = component.fakeApi()
+    val fakeApi = component.fakeApi()
     val prefs = component.prefs()
 
     println()
@@ -123,41 +125,46 @@ fun main(args: Array<String>) {
     println("weather in $city1: $weather1")
 
     val city2 = "St. Pete"
-    val weather2 = stubApi.getWeather(city2)
+    val weather2 = fakeApi.getWeather(city2)
     println("weather in $city2: $weather2")
 
     // testing the singletons
-    val realApi2 = component.api()
-    val stubApi2 = component.fakeApi()
+    val realApi2 = component.api().getWeather("")
+    val fakeApi2 = component.fakeApi().getWeather("")
 
     // testing shared prefs
-    prefs.map.put("hello", "world")
+    prefs.map["hello"] = "world"
     println("hello: ${prefs.map["hello"]}")
 }
 
 // Application (using inject)
-class App {
+object Application {
+    val component = DaggerApiComponent.builder().contextModule(ContextModule(Context())).build()!!
+}
+
+class Activity1 {
     @Inject @field:Real lateinit var realApi: Api
     @Inject @field:Fake lateinit var fakeApi: Api
     @Inject lateinit var sharedPrefs: SharedPrefs
+    init { Application.component.inject(this) }
+}
 
-    init {
-        DaggerApiComponent
-                .builder()
-                .contextModule(ContextModule(Context()))
-                .build()
-                .inject(this)
-    }
+class Activity2 {
+    @Inject lateinit var sharedPrefs: SharedPrefs
+    init { Application.component.inject(this) }
 }
 
 object Epp {
     @JvmStatic
     fun main(args: Array<String>) {
-        val app = App()
+        val app = Activity1()
         val w1 = app.fakeApi.getWeather("St Pete")
         val w2 = app.realApi.getWeather("Lj")
         println("$w1, $w2")
-        app.sharedPrefs.map.put("hello", "world")
+        app.sharedPrefs.map["hello"] = "world"
         println("hello: ${app.sharedPrefs.map["hello"]}")
+
+        val app2 = Activity2()
+        println("hello: ${app2.sharedPrefs.map["hello"]}")
     }
 }
