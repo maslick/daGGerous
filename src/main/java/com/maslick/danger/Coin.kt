@@ -1,7 +1,9 @@
 package com.maslick.danger
 
+import org.koin.Koin
 import org.koin.dsl.module.Module
 import org.koin.dsl.module.applicationContext
+import org.koin.log.EmptyLogger
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.StandAloneContext.startKoin
 import org.koin.standalone.inject
@@ -45,14 +47,24 @@ class HttpClient(val cache: Cache, val logging: LoggingInterceptor) {
 }
 
 
-val appModule: Module = applicationContext {
+val contextModule: Module = applicationContext {
     bean { Context() }
+}
+
+val httpModule = applicationContext {
     bean { HttpClient(get(), get()) }
     bean { Cache(get()) }
     bean { File(get()) }
     bean { LoggingInterceptor() }
+}
+
+val apiModule: Module = applicationContext {
     bean("real") { RealApi(get()) as Api }
     bean("fake") { FakeApi() as Api }
+}
+
+val sharedPrefsModule: Module = applicationContext {
+    bean { SharedPrefs(get()) }
 }
 
 class MyApplication : KoinComponent {
@@ -67,6 +79,11 @@ class MyApplication : KoinComponent {
 
 
 fun main(args: Array<String>) {
-    startKoin(listOf(appModule))
-    MyApplication()
+    Koin.logger = EmptyLogger()
+    startKoin(listOf(
+                contextModule,
+                httpModule,
+                apiModule,
+                sharedPrefsModule
+    ))
 }
